@@ -1,11 +1,14 @@
 
+
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
 
 async function getZillowData(url) {
     
-    fetch(`https://api.scraperapi.com/?api_key=${process.env.SCRAPERAPI_KEY}&url={url}`)
+   
+  
+  fetch(`https://api.scraperapi.com/?api_key=${process.env.SCRAPERAPI_KEY}&url=${url}`)
     .then(async response => {
         const htmlData = await response.text()
         const dom = new JSDOM(htmlData);
@@ -16,18 +19,29 @@ async function getZillowData(url) {
       });
 }
 
+
+
+
+
 Bun.serve({
- fetch(req){
+async fetch(req){
         const url = new URL(req.url)
         const urlParam = url.searchParams.get('url')
 
+        
         if(!urlParam){
             return new Response('URL parameter is missing',{status:400})
 
         }
-        const zillowData = getZillowData(urlParam)
+        const zillowData = await getZillowData(urlParam)
+        
+
+
         return new Response(JSON.stringify(zillowData))
    
+        
+        
     }
 })
+
 
